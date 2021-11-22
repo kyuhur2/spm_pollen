@@ -88,40 +88,57 @@ class ModelGLM():
         robjects.globalenv["city"] = self.city
         robjects.globalenv["exposure"] = self.exposure
         robjects.globalenv["outcome"] = self.outcome
-        robjects.globalenv["current_lag_ma"] = self.current_lag_ma
+        robjects.globalenv["interactive"] = self.interactive
+        robjects.globalenv["current_lag"] = self.current_lag_ma
         robjects.r('''
             library(splines)
             library(Epi)
 
             results <- as.data.frame(matrix(nrow=5, ncol=10))
+            colnames(results) <- c(
+                "city", "exposure", "outcome", "quantile", "lag",
+                "rr", "cil", "ciu", "B", "se"
+            )
 
             model1 <- glm(
                 equation1, data=data, family=quasipoisson, na.action(na.omit))
             model2 <- glm(
                 equation2, data=data, family=quasipoisson, na.action(na.omit))
 
-            xx <- summary(model1)$coefficients
-            xy <- grep(exposure, row.names(xx), value=TRUE)
-
             results[, 1] <- rep(city, each=5)
             results[, 2] <- rep(exposure, each=5)
             results[, 3] <- rep(outcome, each=5)
             results[, 4] <- c(0:4)
-            results[, 5] <- rep(current_lag_ma, each=5)
+            results[, 5] <- rep(current_lag, each=5)
             results[, 6:8] <- rbind(
                 ci.exp(model1, subset=exposure),
                 ci.exp(model2, subset=exposure)
             )
-            print(summary(model2)$coefficients)
-            # results[, 9] <- c(
-            #     as.vector(summary(model2)$coefficients[c(paste0(exposure)), 1]),
-            #     as.vector(summary(model1)$coefficients[c(xy), 1])
-            # )
-            # results[, 10] <- c(
-            #     as.vector(summary(model2)$coefficients[c(exposure), 2]),
-            #     as.vector(summary(model1)$coefficients[c(xy), 2])
-            # )
+
+            sum1 <- summary(model1)$coefficients
+            sum2 <- summary(model2)$coefficients
+            exposure1 <- paste(exposure, "_", current_lag, sep="")
+            exposure2 <- paste(
+                exposure1, ":factor(", interactive, "_", current_lag, ")",
+                sep="")
+            print(sum1[exposure1, 1])
+
+            results[, 9] <- c(
+                sum1[exposure1, 1],
+                sum2[exposure1, 1],
+                sum2[paste0(exposure2, 1), 1],
+                sum2[paste0(exposure2, 2), 1],
+                sum2[paste0(exposure2, 3), 1]
+            )
+            results[, 10] <- c(
+                sum1[exposure1, 2],
+                sum2[exposure1, 2],
+                sum2[paste0(exposure2, 1), 2],
+                sum2[paste0(exposure2, 2), 2],
+                sum2[paste0(exposure2, 3), 2]
+            )
         ''')
         results = robjects.globalenv["results"]
+        print(results)
 
         return results

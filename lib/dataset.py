@@ -81,7 +81,7 @@ class ImportAndCleanData():
 
         # print number of NA counts
         print(data[interactive_lag].isna().sum())
-        
+
         # get rid of NA
         data.dropna(subset=[interactive_lag], inplace=True)
 
