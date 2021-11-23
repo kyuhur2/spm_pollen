@@ -2,7 +2,7 @@
   
 Something
 
-*Note  
+# Notes  
   
 Change the **rpy2.robjects.pandas2ri.ri2py_dataframe** function as suggested here: https://github.com/rpy2/rpy2/issues/680  
   
