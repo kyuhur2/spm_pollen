@@ -1,9 +1,15 @@
+import os
+import pandas as pd
+import rpy2.robjects as robjects
+
 from typing import List
+from pathlib import Path
 from rpy2.robjects import pandas2ri
 from rpy2.robjects.packages import importr
 
-import rpy2.robjects as robjects
 
+# path
+path = Path(os.getcwd())
 
 # download r packages
 utils = importr('utils')
@@ -78,6 +84,16 @@ class ModelGLM():
 
         return eq1, eq2
 
+    def export_results(self, path: Path, results: pd.DataFrame):
+        path_name = path / "results/results.csv"
+
+        if os.path.exists(path_name):
+            old_results = pd.read_csv(path_name)
+            old_results = pd.concat([old_results, results], ignore_index=True)
+            old_results.to_csv(path_name, index=False)
+        else:
+            results.to_csv(path_name, index=False)
+
     def r_glm(self, data):
         eq1, eq2 = self.eq_creator()
 
@@ -86,59 +102,16 @@ class ModelGLM():
         robjects.globalenv["equation1"] = eq1
         robjects.globalenv["equation2"] = eq2
         robjects.globalenv["city"] = self.city
+        robjects.globalenv["start_year"] = self.start_year
+        robjects.globalenv["end_year"] = self.end_year
+        robjects.globalenv["start_month"] = self.start_month
+        robjects.globalenv["end_month"] = self.end_month
         robjects.globalenv["exposure"] = self.exposure
-        robjects.globalenv["outcome"] = self.outcome
         robjects.globalenv["interactive"] = self.interactive
+        robjects.globalenv["outcome"] = self.outcome
         robjects.globalenv["current_lag"] = self.current_lag_ma
-        robjects.r('''
-            library(splines)
-            library(Epi)
-
-            results <- as.data.frame(matrix(nrow=5, ncol=10))
-            colnames(results) <- c(
-                "city", "exposure", "outcome", "quantile", "lag",
-                "rr", "cil", "ciu", "B", "se"
-            )
-
-            model1 <- glm(
-                equation1, data=data, family=quasipoisson, na.action(na.omit))
-            model2 <- glm(
-                equation2, data=data, family=quasipoisson, na.action(na.omit))
-
-            results[, 1] <- rep(city, each=5)
-            results[, 2] <- rep(exposure, each=5)
-            results[, 3] <- rep(outcome, each=5)
-            results[, 4] <- c(0:4)
-            results[, 5] <- rep(current_lag, each=5)
-            results[, 6:8] <- rbind(
-                ci.exp(model1, subset=exposure),
-                ci.exp(model2, subset=exposure)
-            )
-
-            sum1 <- summary(model1)$coefficients
-            sum2 <- summary(model2)$coefficients
-            exposure1 <- paste(exposure, "_", current_lag, sep="")
-            exposure2 <- paste(
-                exposure1, ":factor(", interactive, "_", current_lag, ")",
-                sep="")
-            print(sum1[exposure1, 1])
-
-            results[, 9] <- c(
-                sum1[exposure1, 1],
-                sum2[exposure1, 1],
-                sum2[paste0(exposure2, 1), 1],
-                sum2[paste0(exposure2, 2), 1],
-                sum2[paste0(exposure2, 3), 1]
-            )
-            results[, 10] <- c(
-                sum1[exposure1, 2],
-                sum2[exposure1, 2],
-                sum2[paste0(exposure2, 1), 2],
-                sum2[paste0(exposure2, 2), 2],
-                sum2[paste0(exposure2, 3), 2]
-            )
-        ''')
+        robjects.r.source("lib/glm.r")
         results = robjects.globalenv["results"]
-        print(results)
+        results = pandas2ri.ri2py_dataframe(results)
 
-        return results
+        self.export_results(path=path, results=results)

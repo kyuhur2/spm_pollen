@@ -123,4 +123,4 @@ init_model = ModelGLM(
     current_lag_ma=current_lag_ma
 )
 
-model = init_model.r_glm(data=data)
+results = init_model.r_glm(data=data)
