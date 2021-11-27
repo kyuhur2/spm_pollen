@@ -1,31 +1,30 @@
 import os
 import pandas as pd
-import rpy2.robjects as robjects
+import rpy2.robjects as ro
 
+from rpy2.robjects import pandas2ri
 from typing import List
 from pathlib import Path
-from rpy2.robjects import pandas2ri
-from rpy2.robjects.packages import importr
+from lib.python.func import r_checkpackage
 
 
 # path
 path = Path(os.getcwd())
 
-# download r packages
-utils = importr('utils')
-utils.install_packages("Epi", repos="https://cloud.r-project.org")
+# check whether r packages exist and download if not
+r_checkpackage("Epi")
 
 
 class ModelGLM():
     def __init__(
         self,
         city: str,
-        # lag_or_ma: bool,
-        # num_lags: int,
         start_year: int,
         end_year: int,
         start_month: int,
         end_month: int,
+        lag_or_ma: bool,
+        # num_lags: int,
         outcome: str,
         exposure: str,
         interactive: str,
@@ -35,12 +34,12 @@ class ModelGLM():
         current_lag: int
     ):
         self.city = city
-        # self.lag_or_ma = lag_or_ma
-        # self.num_lags = num_lags
         self.start_year = start_year
         self.end_year = end_year
         self.start_month = start_month
         self.end_month = end_month
+        self.lag_or_ma = lag_or_ma
+        # self.num_lags = num_lags
         self.outcome = outcome
         self.exposure = exposure
         self.interactive = interactive
@@ -99,14 +98,12 @@ class ModelGLM():
         return eq1, eq2
 
     def export_results(self, path: Path, results: pd.DataFrame):
-        path_name = path / "results/results.csv"
-
-        if os.path.exists(path_name):
-            old_results = pd.read_csv(path_name)
+        if os.path.exists(path):
+            old_results = pd.read_csv(path)
             old_results = pd.concat([old_results, results], ignore_index=True)
-            old_results.to_csv(path_name, index=False)
+            old_results.to_csv(path, index=False)
         else:
-            results.to_csv(path_name, index=False)
+            results.to_csv(path, index=False)
 
     def r_glm(self, data):
         eq1, eq2 = self.eq_creator()
@@ -115,21 +112,22 @@ class ModelGLM():
         data[self.exposure] = data[self.exposure]/iqr
 
         pandas2ri.activate()
-        robjects.globalenv["data"] = pandas2ri.py2ri(data)
-        robjects.globalenv["equation1"] = eq1
-        robjects.globalenv["equation2"] = eq2
-        robjects.globalenv["city"] = self.city
-        robjects.globalenv["iqr"] = iqr
-        robjects.globalenv["start_year"] = self.start_year
-        robjects.globalenv["end_year"] = self.end_year
-        robjects.globalenv["start_month"] = self.start_month
-        robjects.globalenv["end_month"] = self.end_month
-        robjects.globalenv["exposure"] = self.exposure
-        robjects.globalenv["interactive"] = self.interactive
-        robjects.globalenv["outcome"] = self.outcome
-        robjects.globalenv["current_lag"] = self.current_lag
-        robjects.r.source("lib/glm.r")
-        results = robjects.globalenv["results"]
-        results = pandas2ri.ri2py_dataframe(results)
+        ro.globalenv["data"] = ro.conversion.py2rpy(data)
+        ro.globalenv["equation1"] = eq1
+        ro.globalenv["equation2"] = eq2
+        ro.globalenv["city"] = self.city
+        ro.globalenv["iqr"] = iqr
+        ro.globalenv["start_year"] = self.start_year
+        ro.globalenv["end_year"] = self.end_year
+        ro.globalenv["start_month"] = self.start_month
+        ro.globalenv["end_month"] = self.end_month
+        ro.globalenv["exposure"] = self.exposure
+        ro.globalenv["interactive"] = self.interactive
+        ro.globalenv["outcome"] = self.outcome
+        ro.globalenv["current_lag"] = self.current_lag
+        ro.globalenv["lag_or_ma"] = self.lag_or_ma
+        ro.r.source("lib/r/glm.r")
+        results = ro.globalenv["results"]
+        results = ro.conversion.rpy2py(results)
 
-        self.export_results(path=path, results=results)
+        self.export_results(path=path / "results/results.csv", results=results)

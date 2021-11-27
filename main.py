@@ -34,12 +34,12 @@ parser.add_argument(f"--{args_list[1]}", type=int, default=1989)
 parser.add_argument(f"--{args_list[2]}", type=int, default=2014)
 parser.add_argument(f"--{args_list[3]}", type=int, default=2)
 parser.add_argument(f"--{args_list[4]}", type=int, default=4)
-parser.add_argument(f"--{args_list[5]}", type=int, default=True)
+parser.add_argument(f"--{args_list[5]}", type=bool, default=True)
 parser.add_argument(f"--{args_list[6]}", type=int, default=7)
 parser.add_argument(f"--{args_list[7]}", type=str, default="All")
 parser.add_argument(f"--{args_list[8]}", type=str, default="SPMout")
 parser.add_argument(f"--{args_list[9]}", type=str, default="suhiout")
-parser.add_argument(f"--{args_list[10]}", type=str, default=[
+parser.add_argument(f"--{args_list[10]}", default=[
     "Tave", "RHave", "dow", "doy", "holiday"])
 parser.add_argument(f"--{args_list[11]}", type=bool, default=True)
 parser.add_argument(f"--{args_list[12]}", type=int, default=20)
@@ -112,7 +112,7 @@ init_model = ModelGLM(
     end_year=end_year,
     start_month=start_month,
     end_month=end_month,
-    # lag_or_ma=lag_or_ma,
+    lag_or_ma=lag_or_ma,
     # num_lags=num_lags,
     outcome=outcome,
     exposure=exposure,
