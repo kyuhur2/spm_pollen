@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import rpy2.robjects as ro
 
@@ -15,7 +16,7 @@ path = Path(os.getcwd())
 r_checkpackage("Epi")
 
 
-class ModelGLM():
+class ModelGLM:
     def __init__(
         self,
         city: str,
@@ -24,13 +25,10 @@ class ModelGLM():
         start_month: int,
         end_month: int,
         lag_or_ma: bool,
-        # num_lags: int,
         outcome: str,
         exposure: str,
         interactive: str,
         confounding: List[str],
-        temp_bool: bool,
-        temp_moving_average: int,
         current_lag: int
     ):
         self.city = city
@@ -39,23 +37,21 @@ class ModelGLM():
         self.start_month = start_month
         self.end_month = end_month
         self.lag_or_ma = lag_or_ma
-        # self.num_lags = num_lags
         self.outcome = outcome
         self.exposure = exposure
         self.interactive = interactive
         self.confounding = confounding
-        self.temp_bool = temp_bool
-        self.temp_moving_average = temp_moving_average
         self.current_lag = current_lag
 
     def calculate_iqr(self, data) -> float:
-        """[Calculates and returns inter-quartile range.]
+        """
+        Calculates and returns inter-quartile range.
 
         Args:
-            data ([pd.DataFrame]): [Dataframe.]
+            data (pd.DataFrame): Dataframe.
 
         Returns:
-            [float]: [Inter-quartile range.]
+            q3 - q1 (float): Inter-quartile range.
         """
         q1 = data[self.exposure].quantile(.25)
         q3 = data[self.exposure].quantile(.75)
@@ -63,30 +59,33 @@ class ModelGLM():
         return q3 - q1
 
     def eq_creator(self):
-        for i, i_element in enumerate(self.confounding):
-            if i_element == "Tave":
-                i_element = f"ns({i_element}, df=5)"
+        """
+        Creates equations for model 1 and model 2.
 
-            if i_element == f"Tave_ma{self.current_lag}":
-                i_element = f"ns({i_element}, df=5)"
+        Returns:
+            eq1, eq2 (str, str): Equation 1 and equation 2.
+        """
+        for i, i_ele in enumerate(self.confounding):
+            if i_ele == "Tave":
+                i_ele = f"ns({i_ele}, df=5)"
 
-            if i_element == "doy":
-                i_element = f"ns({i_element}, df=5):factor(year)"
+            if i_ele == f"Tave_ma{self.current_lag}":
+                i_ele = f"ns({i_ele}, df=5)"
 
-            if (i_element == "dow") | (i_element == "holiday"):
-                i_element = f"factor({i_element})"
+            if i_ele == "doy":
+                i_ele = f"ns({i_ele}, df=5):factor(year)"
+
+            if (i_ele == "dow") | (i_ele == "holiday") | (i_ele == "ad"):
+                i_ele = f"factor({i_ele})"
 
             if i == 0:
-                x = i_element
+                x = i_ele
 
             else:
-                x = x + " + " + i_element
+                x = x + " + " + i_ele
 
         # non-interactive
-        eq1 = (
-            f"{self.outcome} ~ {self.exposure}_{self.current_lag} + " +
-            f"{self.exposure}_{self.current_lag} + {x}"
-        )
+        eq1 = f"{self.outcome} ~ {self.exposure}_{self.current_lag} + {x}"
 
         # interactive
         eq2 = (
@@ -97,37 +96,131 @@ class ModelGLM():
 
         return eq1, eq2
 
-    def export_results(self, path: Path, results: pd.DataFrame):
+    def export_data(self, path: Path, data: pd.DataFrame):
+        """
+        Exports data to path.
+
+        Args:
+            path (Path): Path to export to.
+            data (pd.DataFrame): Data.
+        """
         if os.path.exists(path):
-            old_results = pd.read_csv(path)
-            old_results = pd.concat([old_results, results], ignore_index=True)
-            old_results.to_csv(path, index=False)
+            old_data = pd.read_csv(path)
+            old_data = pd.concat([old_data, data], ignore_index=True)
+            old_data.to_csv(path, index=False)
         else:
-            results.to_csv(path, index=False)
+            data.to_csv(path, index=False)
 
-    def r_glm(self, data):
-        eq1, eq2 = self.eq_creator()
-
-        iqr = self.calculate_iqr(data)
-        data[self.exposure] = data[self.exposure]/iqr
-
+    def interactive_glm(self, data, eq1, eq2):
         pandas2ri.activate()
         ro.globalenv["data"] = ro.conversion.py2rpy(data)
         ro.globalenv["equation1"] = eq1
         ro.globalenv["equation2"] = eq2
-        ro.globalenv["city"] = self.city
-        ro.globalenv["iqr"] = iqr
-        ro.globalenv["start_year"] = self.start_year
-        ro.globalenv["end_year"] = self.end_year
-        ro.globalenv["start_month"] = self.start_month
-        ro.globalenv["end_month"] = self.end_month
         ro.globalenv["exposure"] = self.exposure
-        ro.globalenv["interactive"] = self.interactive
         ro.globalenv["outcome"] = self.outcome
-        ro.globalenv["current_lag"] = self.current_lag
-        ro.globalenv["lag_or_ma"] = self.lag_or_ma
-        ro.r.source("lib/r/glm.r")
-        results = ro.globalenv["results"]
-        results = ro.conversion.rpy2py(results)
+        ro.globalenv["interactive"] = self.interactive
+        ro.r.source("lib/r/r_interactive_glm.r")
 
-        self.export_results(path=path / "results/results.csv", results=results)
+        exp1 = ro.conversion.rpy2py(ro.globalenv["exp1"])
+        exp2 = ro.conversion.rpy2py(ro.globalenv["exp2"])
+        sum1 = ro.conversion.rpy2py(ro.globalenv["sum1"])
+        sum2 = ro.conversion.rpy2py(ro.globalenv["sum2"])
+
+        return exp1, exp2, sum1, sum2
+
+    def model(self, data):
+        eq1, eq2 = self.eq_creator()
+        iqr = self.calculate_iqr(data)
+        data[self.exposure] = data[self.exposure]/iqr
+
+        # results from glm
+        exp1, exp2, sum1, sum2 = self.interactive_glm(data, eq1, eq2)
+
+        # dataframe specifications
+        exposure_lag = self.exposure + "_" + str(self.current_lag)
+        exposure_lag_interactive = (
+            exposure_lag + ":factor(" + self.interactive + "_" +
+            str(self.current_lag) + ")"
+        )
+
+        if self.lag_or_ma is True:
+            lag_or_ma = "lag"
+        else:
+            lag_or_ma = "ma"
+
+        num_rows = 5
+        col_names = [
+            "city",
+            "start_year",
+            "end_year",
+            "start_month",
+            "end_month",
+            "exposure",
+            "interactive",
+            "outcome",
+            "lag_or_ma",
+            "lag",
+            "iqr",
+            "quantile",
+            "rr",
+            "cil",
+            "ciu",
+            "B",
+            "se"
+        ]
+
+        # create results df
+        results = []
+        results.append(pd.DataFrame(np.repeat(self.city, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.start_year, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.end_year, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.start_month, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.end_month, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.exposure, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.interactive, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.outcome, num_rows)))
+        results.append(pd.DataFrame(np.repeat(lag_or_ma, num_rows)))
+        results.append(pd.DataFrame(np.repeat(self.current_lag, num_rows)))
+        results.append(pd.DataFrame(np.repeat(iqr, num_rows)))
+        results.append(pd.DataFrame(range(0, 5)))
+
+        # relative risk, confidence interval lower/upper
+        rr_cil_ciu = pd.concat([
+            exp1.loc[[exposure_lag], :],
+            exp2[exp2.index.str.startswith(self.exposure)]
+        ], ignore_index=True)
+        results.append(rr_cil_ciu)
+
+        # B, se
+        results.append(
+            pd.DataFrame(
+                [
+                    sum1.loc[exposure_lag, :]["Estimate"],
+                    sum2.loc[exposure_lag, :]["Estimate"],
+                    sum2.loc[exposure_lag_interactive + "1", :]["Estimate"],
+                    sum2.loc[exposure_lag_interactive + "2", :]["Estimate"],
+                    sum2.loc[exposure_lag_interactive + "3", :]["Estimate"]
+                ]
+            )
+        )
+        results.append(
+            pd.DataFrame(
+                [
+                    sum1.loc[exposure_lag, :]["Std. Error"],
+                    sum2.loc[exposure_lag, :]["Std. Error"],
+                    sum2.loc[exposure_lag_interactive + "1", :]["Std. Error"],
+                    sum2.loc[exposure_lag_interactive + "2", :]["Std. Error"],
+                    sum2.loc[exposure_lag_interactive + "3", :]["Std. Error"]
+                ]
+            )
+        )
+
+        # concatenate & rename columns
+        results = pd.concat(results, ignore_index=True, axis=1)
+        results.columns = col_names
+
+        # save results
+        self.export_data(
+            path / "results/results.csv",
+            data=results
+        )

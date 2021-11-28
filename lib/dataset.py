@@ -9,7 +9,7 @@ path = Path(os.getcwd())
 data = pd.read_csv(path / "data/cleaned_data.csv")
 
 
-class ImportAndCleanData():
+class ImportAndCleanData:
     def __init__(
         self,
         city: str,

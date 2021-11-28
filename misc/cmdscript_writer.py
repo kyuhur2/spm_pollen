@@ -29,7 +29,11 @@ lags = [i for i in range(1, 6)]
 
 lag_or_ma = [True, False]
 
-script = ["@echo off", "\n", ]
+script = [
+    "@echo off", "\n",
+    "call activate spm_pollen", "\n"
+]
+
 for i in lag_or_ma:
     for j in cities:
         for k in lags:
@@ -38,6 +42,7 @@ for i in lag_or_ma:
             )
             script.append(line)
 
+script.append("call conda deactivate")
 script.append("@pause")
 
 with open(os.path.join(path.parent / "script.bat"), "w") as OPATH:
