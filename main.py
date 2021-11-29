@@ -1,4 +1,4 @@
-import os
+import os  # noqa
 import argparse
 import pandas as pd
 
@@ -9,8 +9,8 @@ from lib.printargs import printargs, println  # noqa
 
 
 pd.options.mode.chained_assignment = None
-r_home_path = "C:\\Users\\kyuhu\\anaconda3\\envs\\spm_pollen\\Scripts\\R.exe"
-os.environ["R_HOME"] = r_home_path
+# r_home_path = "C:\\Users\\kyuhu\\anaconda3\\envs\\spm_pollen\\Scripts\\R.exe"
+# os.environ["R_HOME"] = r_home_path
 
 args_list = [
     # data configurations
@@ -65,8 +65,7 @@ temp_bool = args.temp_bool
 temp_moving_average = args.temp_moving_average
 current_lag = args.current_lag
 
-# add Tave_ma20 as a confounding variable
-confounding.append("Tave_ma" + str(temp_moving_average))
+confounding.append("Tave_ma" + str(temp_moving_average))  # add Tave_ma20
 
 printargs(
     args_list,
@@ -119,8 +118,9 @@ test_model = ModelQAIC(
 )
 
 test_model.best_model(data=data)
-confounding = test_model.best_confounding_qaic()
-
+# confounding = test_model.best_confounding_qaic()
+# print(type(confounding))
+# print(confounding)
 
 # model
 init_model = ModelGLM(

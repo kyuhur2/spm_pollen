@@ -14,6 +14,8 @@ In the current project, the variables are:
 
 path = Path(os.getcwd())
 
+lags = [i for i in range(1, 6)]
+lag_or_ma = [True, False]
 cities = [
     "Fukuoka",
     "Kumamoto",
@@ -25,13 +27,12 @@ cities = [
     "Kitakyushu"
 ]
 
-lags = [i for i in range(1, 6)]
-
-lag_or_ma = [True, False]
-
 script = [
-    "@echo off", "\n",
-    "call activate spm_pollen", "\n"
+    "@echo off\n",
+    f"cd {path.parent}\n",
+    "del /f model\\qaics.csv\n",
+    "del /f results\\results.csv\n",
+    "call conda activate spm_pollen\n",
 ]
 
 for i in lag_or_ma:
@@ -42,7 +43,7 @@ for i in lag_or_ma:
             )
             script.append(line)
 
-script.append("call conda deactivate")
+script.append("call conda deactivate\n")
 script.append("@pause")
 
 with open(os.path.join(path.parent / "script.bat"), "w") as OPATH:

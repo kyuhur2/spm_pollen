@@ -77,8 +77,12 @@ class ImportAndCleanData:
             interactive_lag = self.interactive + "_ma" + str(self.current_lag)
 
         # turn into quantiles
-        data[interactive_lag] = pd.qcut(
-            data[interactive_lag], 4, labels=False)
+        try:
+            data[interactive_lag] = pd.qcut(
+                data[interactive_lag], 4, labels=False)
+        except Exception:
+            data[interactive_lag] = pd.qcut(
+                data[interactive_lag], 4, labels=False, duplicates="drop")
 
         # print number of NA counts
         print("Number of NA counts:" + str(data[interactive_lag].isna().sum()))

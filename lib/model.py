@@ -113,7 +113,7 @@ class ModelGLM:
 
     def interactive_glm(self, data, eq1, eq2):
         pandas2ri.activate()
-        ro.globalenv["data"] = ro.conversion.py2rpy(data)
+        ro.globalenv["data"] = ro.conversion.py2ri(data)
         ro.globalenv["equation1"] = eq1
         ro.globalenv["equation2"] = eq2
         ro.globalenv["exposure"] = self.exposure
@@ -121,10 +121,15 @@ class ModelGLM:
         ro.globalenv["interactive"] = self.interactive
         ro.r.source("lib/r/r_interactive_glm.r")
 
-        exp1 = ro.conversion.rpy2py(ro.globalenv["exp1"])
-        exp2 = ro.conversion.rpy2py(ro.globalenv["exp2"])
-        sum1 = ro.conversion.rpy2py(ro.globalenv["sum1"])
-        sum2 = ro.conversion.rpy2py(ro.globalenv["sum2"])
+        exp1 = ro.conversion.ri2py(ro.globalenv["exp1"])
+        exp2 = ro.conversion.ri2py(ro.globalenv["exp2"])
+        sum1 = ro.conversion.ri2py(ro.globalenv["sum1"])
+        sum2 = ro.conversion.ri2py(ro.globalenv["sum2"])
+
+        exp1 = exp1.set_index("None")
+        exp2 = exp2.set_index("None")
+        sum1 = sum1.set_index("None")
+        sum2 = sum2.set_index("None")
 
         return exp1, exp2, sum1, sum2
 

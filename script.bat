@@ -1,4 +1,87 @@
-@echo on
+@echo off
+cd c:\Users\kyuhu\OneDrive\Documents\GitHub\spm_pollen
+del /f model\qaics.csv
+del /f results\results.csv
 call conda activate spm_pollen
 python main.py --lag_or_ma True --city Fukuoka --num_lags 1
+python main.py --lag_or_ma True --city Fukuoka --num_lags 2
+python main.py --lag_or_ma True --city Fukuoka --num_lags 3
+python main.py --lag_or_ma True --city Fukuoka --num_lags 4
+python main.py --lag_or_ma True --city Fukuoka --num_lags 5
+python main.py --lag_or_ma True --city Kumamoto --num_lags 1
+python main.py --lag_or_ma True --city Kumamoto --num_lags 2
+python main.py --lag_or_ma True --city Kumamoto --num_lags 3
+python main.py --lag_or_ma True --city Kumamoto --num_lags 4
+python main.py --lag_or_ma True --city Kumamoto --num_lags 5
+python main.py --lag_or_ma True --city Nagasaki --num_lags 1
+python main.py --lag_or_ma True --city Nagasaki --num_lags 2
+python main.py --lag_or_ma True --city Nagasaki --num_lags 3
+python main.py --lag_or_ma True --city Nagasaki --num_lags 4
+python main.py --lag_or_ma True --city Nagasaki --num_lags 5
+python main.py --lag_or_ma True --city Oita --num_lags 1
+python main.py --lag_or_ma True --city Oita --num_lags 2
+python main.py --lag_or_ma True --city Oita --num_lags 3
+python main.py --lag_or_ma True --city Oita --num_lags 4
+python main.py --lag_or_ma True --city Oita --num_lags 5
+python main.py --lag_or_ma True --city Saga --num_lags 1
+python main.py --lag_or_ma True --city Saga --num_lags 2
+python main.py --lag_or_ma True --city Saga --num_lags 3
+python main.py --lag_or_ma True --city Saga --num_lags 4
+python main.py --lag_or_ma True --city Saga --num_lags 5
+python main.py --lag_or_ma True --city Kagoshima --num_lags 1
+python main.py --lag_or_ma True --city Kagoshima --num_lags 2
+python main.py --lag_or_ma True --city Kagoshima --num_lags 3
+python main.py --lag_or_ma True --city Kagoshima --num_lags 4
+python main.py --lag_or_ma True --city Kagoshima --num_lags 5
+python main.py --lag_or_ma True --city Miyazaki --num_lags 1
+python main.py --lag_or_ma True --city Miyazaki --num_lags 2
+python main.py --lag_or_ma True --city Miyazaki --num_lags 3
+python main.py --lag_or_ma True --city Miyazaki --num_lags 4
+python main.py --lag_or_ma True --city Miyazaki --num_lags 5
+python main.py --lag_or_ma True --city Kitakyushu --num_lags 1
+python main.py --lag_or_ma True --city Kitakyushu --num_lags 2
+python main.py --lag_or_ma True --city Kitakyushu --num_lags 3
+python main.py --lag_or_ma True --city Kitakyushu --num_lags 4
+python main.py --lag_or_ma True --city Kitakyushu --num_lags 5
+python main.py --lag_or_ma False --city Fukuoka --num_lags 1
+python main.py --lag_or_ma False --city Fukuoka --num_lags 2
+python main.py --lag_or_ma False --city Fukuoka --num_lags 3
+python main.py --lag_or_ma False --city Fukuoka --num_lags 4
+python main.py --lag_or_ma False --city Fukuoka --num_lags 5
+python main.py --lag_or_ma False --city Kumamoto --num_lags 1
+python main.py --lag_or_ma False --city Kumamoto --num_lags 2
+python main.py --lag_or_ma False --city Kumamoto --num_lags 3
+python main.py --lag_or_ma False --city Kumamoto --num_lags 4
+python main.py --lag_or_ma False --city Kumamoto --num_lags 5
+python main.py --lag_or_ma False --city Nagasaki --num_lags 1
+python main.py --lag_or_ma False --city Nagasaki --num_lags 2
+python main.py --lag_or_ma False --city Nagasaki --num_lags 3
+python main.py --lag_or_ma False --city Nagasaki --num_lags 4
+python main.py --lag_or_ma False --city Nagasaki --num_lags 5
+python main.py --lag_or_ma False --city Oita --num_lags 1
+python main.py --lag_or_ma False --city Oita --num_lags 2
+python main.py --lag_or_ma False --city Oita --num_lags 3
+python main.py --lag_or_ma False --city Oita --num_lags 4
+python main.py --lag_or_ma False --city Oita --num_lags 5
+python main.py --lag_or_ma False --city Saga --num_lags 1
+python main.py --lag_or_ma False --city Saga --num_lags 2
+python main.py --lag_or_ma False --city Saga --num_lags 3
+python main.py --lag_or_ma False --city Saga --num_lags 4
+python main.py --lag_or_ma False --city Saga --num_lags 5
+python main.py --lag_or_ma False --city Kagoshima --num_lags 1
+python main.py --lag_or_ma False --city Kagoshima --num_lags 2
+python main.py --lag_or_ma False --city Kagoshima --num_lags 3
+python main.py --lag_or_ma False --city Kagoshima --num_lags 4
+python main.py --lag_or_ma False --city Kagoshima --num_lags 5
+python main.py --lag_or_ma False --city Miyazaki --num_lags 1
+python main.py --lag_or_ma False --city Miyazaki --num_lags 2
+python main.py --lag_or_ma False --city Miyazaki --num_lags 3
+python main.py --lag_or_ma False --city Miyazaki --num_lags 4
+python main.py --lag_or_ma False --city Miyazaki --num_lags 5
+python main.py --lag_or_ma False --city Kitakyushu --num_lags 1
+python main.py --lag_or_ma False --city Kitakyushu --num_lags 2
+python main.py --lag_or_ma False --city Kitakyushu --num_lags 3
+python main.py --lag_or_ma False --city Kitakyushu --num_lags 4
+python main.py --lag_or_ma False --city Kitakyushu --num_lags 5
+call conda deactivate
 @pause

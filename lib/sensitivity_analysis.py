@@ -109,7 +109,7 @@ class ModelQAIC:
 
     def interactive_qaic(self, data, eq1, eq2):
         pandas2ri.activate()
-        ro.globalenv["data"] = ro.conversion.py2rpy(data)
+        ro.globalenv["data"] = ro.conversion.py2ri(data)
         ro.globalenv["equation1"] = eq1
         ro.globalenv["equation2"] = eq2
         ro.globalenv["exposure"] = self.exposure
@@ -117,8 +117,8 @@ class ModelQAIC:
         ro.globalenv["interactive"] = self.interactive
         ro.r.source("lib/r/r_interactive_qaic.r")
 
-        model1 = ro.conversion.rpy2py(ro.globalenv["model1"])
-        model2 = ro.conversion.rpy2py(ro.globalenv["model2"])
+        model1 = ro.conversion.ri2py(ro.globalenv["model1"])
+        model2 = ro.conversion.ri2py(ro.globalenv["model2"])
         qaic1 = ro.globalenv["qaic1"]
         qaic2 = ro.globalenv["qaic2"]
 
@@ -165,17 +165,19 @@ class ModelQAIC:
             data=qaics
         )
 
-        # anova
-        ro.globalenv["model1s"] = model1s
-        ro.globalenv["model2s"] = model2s
-        ro.r.source("lib/r/r_interactive_anova.r")
-        anova1 = ro.globalenv["anova1"]
-        anova2 = ro.globalenv["anova2"]
+        # # anova
+        # ro.globalenv["model1s"] = model1s
+        # ro.globalenv["model2s"] = model2s
+        # ro.r.source("lib/r/r_interactive_anova.r")
+        # anova1 = ro.globalenv["anova1"]
+        # anova2 = ro.globalenv["anova2"]
 
-        print(anova1)
-        print(anova2)
+        # print(anova1)
+        # print(anova2)
 
     def best_confounding_qaic(self):
         qaics = pd.read_csv(path / "model/qaics.csv")
+        conf = qaics.loc[qaics["QAIC of Equation 2"].idxmin()]
+        conf = conf["Confounding Variables"].split("','")
 
-        return qaics.loc[qaics["QAIC of Equation 2"].idxmin()]
+        return conf
