@@ -165,16 +165,6 @@ class ModelQAIC:
             data=qaics
         )
 
-        # # anova
-        # ro.globalenv["model1s"] = model1s
-        # ro.globalenv["model2s"] = model2s
-        # ro.r.source("lib/r/r_interactive_anova.r")
-        # anova1 = ro.globalenv["anova1"]
-        # anova2 = ro.globalenv["anova2"]
-
-        # print(anova1)
-        # print(anova2)
-
     def best_confounding_qaic(self):
         qaics = pd.read_csv(path / "model/qaics.csv")
         conf = qaics.loc[qaics["QAIC of Equation 2"].idxmin()]

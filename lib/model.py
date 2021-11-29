@@ -69,7 +69,7 @@ class ModelGLM:
             if i_ele == "Tave":
                 i_ele = f"ns({i_ele}, df=5)"
 
-            if i_ele == f"Tave_ma{self.current_lag}":
+            if i_ele == "Tave_ma20":
                 i_ele = f"ns({i_ele}, df=5)"
 
             if i_ele == "doy":
@@ -167,6 +167,7 @@ class ModelGLM:
             "lag",
             "iqr",
             "quantile",
+            "equation",
             "rr",
             "cil",
             "ciu",
@@ -188,6 +189,7 @@ class ModelGLM:
         results.append(pd.DataFrame(np.repeat(self.current_lag, num_rows)))
         results.append(pd.DataFrame(np.repeat(iqr, num_rows)))
         results.append(pd.DataFrame(range(0, 5)))
+        results.append(pd.Series([eq2] * num_rows))
 
         # relative risk, confidence interval lower/upper
         rr_cil_ciu = pd.concat([

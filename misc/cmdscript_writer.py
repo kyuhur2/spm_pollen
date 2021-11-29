@@ -27,6 +27,7 @@ cities = [
     "Kitakyushu"
 ]
 
+# activate conda
 script = [
     "@echo off\n",
     f"cd {path.parent}\n",
@@ -35,14 +36,30 @@ script = [
     "call conda activate spm_pollen\n",
 ]
 
+# model selection
 for i in lag_or_ma:
     for j in cities:
         for k in lags:
             line = (
-                f"python main.py --lag_or_ma {i} --city {j} --num_lags {k}\n"
+                "python model_selection.py " +
+                f"--lag_or_ma {i} --city {j} --num_lags {k}\n"
             )
             script.append(line)
 
+# determine confounding variables based on AIC
+script.append("python determine_model.py\n")
+
+# run model
+for i in lag_or_ma:
+    for j in cities:
+        for k in lags:
+            line = (
+                "python run_model.py " +
+                f"--lag_or_ma {i} --city {j} --num_lags {k}\n"
+            )
+            script.append(line)
+
+# deactivate conda
 script.append("call conda deactivate\n")
 script.append("@pause")
 

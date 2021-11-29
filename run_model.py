@@ -1,16 +1,20 @@
-import os  # noqa
+import os
+import json
 import argparse
 import pandas as pd
 
+from pathlib import Path
 from lib.model import ModelGLM
-from lib.sensitivity_analysis import ModelQAIC
 from lib.dataset import ImportAndCleanData
 from lib.printargs import printargs, println  # noqa
 
 
 pd.options.mode.chained_assignment = None
-# r_home_path = "C:\\Users\\kyuhu\\anaconda3\\envs\\spm_pollen\\Scripts\\R.exe"
-# os.environ["R_HOME"] = r_home_path
+
+# import confounding list
+path = Path(os.getcwd())
+with open(path / "model/confounding.json", "r") as f:
+    conf = json.load(f)
 
 args_list = [
     # data configurations
@@ -43,8 +47,7 @@ parser.add_argument(f"--{args_list[6]}", type=int, default=7)
 parser.add_argument(f"--{args_list[7]}", type=str, default="All")
 parser.add_argument(f"--{args_list[8]}", type=str, default="SPMout")
 parser.add_argument(f"--{args_list[9]}", type=str, default="suhiout")
-parser.add_argument(f"--{args_list[10]}", default=[
-    "Tave", "RHave", "dow", "doy", "ad", "holiday"])
+parser.add_argument(f"--{args_list[10]}", default=conf)
 parser.add_argument(f"--{args_list[11]}", type=bool, default=True)
 parser.add_argument(f"--{args_list[12]}", type=int, default=20)
 parser.add_argument(f"--{args_list[13]}", type=int, default=1)
@@ -64,8 +67,6 @@ confounding = args.confounding
 temp_bool = args.temp_bool
 temp_moving_average = args.temp_moving_average
 current_lag = args.current_lag
-
-confounding.append("Tave_ma" + str(temp_moving_average))  # add Tave_ma20
 
 printargs(
     args_list,
@@ -88,7 +89,7 @@ printargs(
     ]
 )
 
-# data
+# subset data
 init_dataset = ImportAndCleanData(
     city=city,
     start_year=start_year,
@@ -108,21 +109,7 @@ init_dataset = ImportAndCleanData(
 
 data = init_dataset.clean_data()
 
-# best model
-test_model = ModelQAIC(
-    outcome=outcome,
-    exposure=exposure,
-    interactive=interactive,
-    confounding=confounding,
-    current_lag=current_lag
-)
-
-test_model.best_model(data=data)
-# confounding = test_model.best_confounding_qaic()
-# print(type(confounding))
-# print(confounding)
-
-# model
+# run model
 init_model = ModelGLM(
     city=city,
     start_year=start_year,
