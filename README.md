@@ -2,6 +2,8 @@
   
 Contains code for a project in the works, investigating how pollen modifies the association between air pollution and mortality.
 
+![Graphical Abstract](https://github.com/kyuhur2/spm_pollen/blob/main/images/graphical_abstract.png?raw=true)
+
 # Project Layout
   
     spm_pollen/  
