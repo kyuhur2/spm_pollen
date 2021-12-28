@@ -1,7 +1,9 @@
 # SPM Pollen Project
   
-Contains code for a project in the works, investigating how pollen modifies the association between air pollution and mortality.
-
+Contains code for a project in the works, investigating how pollen modifies the association between air pollution and mortality.  
+  
+Below is a graphical abstract that describes the project. This graphical abstract was published as part of the 2021 ISEE Conference. The conference abstract can be accessed ![here](https://ehp.niehs.nih.gov/doi/abs/10.1289/isee.2021.P-594).  
+  
 ![Graphical Abstract](https://github.com/kyuhur2/spm_pollen/blob/main/images/graphical_abstract.png?raw=true)
 
 # Project Layout
