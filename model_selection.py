@@ -4,8 +4,10 @@ import pandas as pd
 from lib.sensitivity_analysis import ModelQAIC
 from lib.dataset import ImportAndCleanData
 from lib.printargs import printargs, println  # noqa
+from lib.install_r_packages import r_checkpackage
 
 
+# set options
 pd.options.mode.chained_assignment = None
 
 args_list = [
@@ -62,6 +64,10 @@ temp_moving_average = args.temp_moving_average
 current_lag = args.current_lag
 
 confounding.append("Tave_ma" + str(temp_moving_average))  # add Tave_ma20
+
+print("Install missing r packages (if any).")
+r_checkpackage("Epi")
+r_checkpackage("metafor")
 
 printargs(
     args_list,

@@ -6,14 +6,10 @@ import rpy2.robjects as ro
 from rpy2.robjects import pandas2ri
 from typing import List
 from pathlib import Path
-from lib.python.func import r_checkpackage
 
 
 # path
 path = Path(os.getcwd())
-
-# check whether r packages exist and download if not
-r_checkpackage("Epi")
 
 
 class ModelGLM:

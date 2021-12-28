@@ -11,7 +11,6 @@ In the current project, the variables are:
  - city
  - lag
 """
-
 path = Path(os.getcwd())
 
 lags = [i for i in range(1, 6)]
