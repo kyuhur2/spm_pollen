@@ -12,6 +12,16 @@ Contains code for a project in the works, investigating how pollen modifies the 
     │       ├── air pollution station geocodes.csv   
     │       └── clinic station geocodes.csv  
     │  
+    ├── docs/  # not committed to github, docs are private currently  
+    │   ├── docx_reference.docx
+    │   ├── docx_template.docx
+    │   ├── docx_template.rmd
+    │   ├── plos.csv
+    │   └── r-references.bib
+    │  
+    ├── images/  
+    │   └── graphical_abstract.png
+    │
     ├── lib/  
     │   ├── dataset.py  
     │   ├── install_r_packages.py  
@@ -38,6 +48,7 @@ Contains code for a project in the works, investigating how pollen modifies the 
     ├── model_selection.py  
     ├── run_model.py  
     ├── script.bat    
+    ├── environment.yml  
     └── README.md  
   
 # Notes  

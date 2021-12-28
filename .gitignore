@@ -3,6 +3,7 @@ data/misc/
 data/cleaned_data.csv
 model/qaics.csv
 results/results.csv
+docs/
 .vscode
 .gitignore
 
