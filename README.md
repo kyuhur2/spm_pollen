@@ -10,7 +10,7 @@ Below is a graphical abstract that describes the project. This graphical abstrac
   
 The project flow is described in the diagram below. A tree of the project files and folders are provided as well.
 
-![Project Flow Diagram]()
+![Project Flow Diagram](https://github.com/kyuhur2/spm_pollen/blob/main/images/project_flow_diagram.png?raw=true)
 
     spm_pollen/  
     │  
