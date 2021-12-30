@@ -8,6 +8,10 @@ Below is a graphical abstract that describes the project. This graphical abstrac
 
 # Project Layout
   
+The project flow is described in the diagram below. A tree of the project files and folders are provided as well.
+
+![Project Flow Diagram]()
+
     spm_pollen/  
     │  
     ├── data/  # not committed to github, data is private  
@@ -47,6 +51,12 @@ Below is a graphical abstract that describes the project. This graphical abstrac
     │  
     ├── results/  
     │   └── results.csv  
+    │  
+    ├── src/
+    │   ├── aggregate_models.py
+    │   ├── determine_model.py
+    │   ├── model_selection.py
+    │   └── run_models.py
     │  
     ├── determine_model.py  
     ├── model_selection.py  

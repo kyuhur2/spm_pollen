@@ -39,7 +39,7 @@ class ModelGLM:
         self.confounding = confounding
         self.current_lag = current_lag
 
-    def calculate_iqr(self, data) -> float:
+    def calculate_iqr(self, data):
         """
         Calculates and returns inter-quartile range.
 

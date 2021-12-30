@@ -1,13 +1,16 @@
+import os
 import argparse
 import pandas as pd
 
+from pathlib import Path
 from lib.sensitivity_analysis import ModelQAIC
 from lib.dataset import ImportAndCleanData
-from lib.printargs import printargs, println  # noqa
+from lib.saveargs import saveargs, printargs  # noqa
 from lib.install_r_packages import r_checkpackage
 
 
-# set options
+# set options and path
+path = Path(os.getcwd())
 pd.options.mode.chained_assignment = None
 
 args_list = [
@@ -69,25 +72,32 @@ print("Install missing r packages (if any).")
 r_checkpackage("Epi")
 r_checkpackage("metafor")
 
+args_val = [
+    city,
+    start_year,
+    end_year,
+    start_month,
+    end_month,
+    lag_or_ma,
+    num_lags,
+
+    outcome,
+    exposure,
+    interactive,
+    confounding,
+    temp_bool,
+    temp_moving_average,
+    current_lag
+]
+
 printargs(
     args_list,
-    args_val=[
-        city,
-        start_year,
-        end_year,
-        start_month,
-        end_month,
-        lag_or_ma,
-        num_lags,
+    args_val=args_val
+)
 
-        outcome,
-        exposure,
-        interactive,
-        confounding,
-        temp_bool,
-        temp_moving_average,
-        current_lag
-    ]
+saveargs(
+    args_val=args_val,
+    saveargs_path=(path / "results")
 )
 
 # data

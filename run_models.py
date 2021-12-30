@@ -6,7 +6,7 @@ import pandas as pd
 from pathlib import Path
 from lib.model import ModelGLM
 from lib.dataset import ImportAndCleanData
-from lib.printargs import printargs, println  # noqa
+from lib.saveargs import printargs, println  # noqa
 
 
 pd.options.mode.chained_assignment = None
@@ -109,7 +109,7 @@ init_dataset = ImportAndCleanData(
 
 data = init_dataset.clean_data()
 
-# run model
+# run models and save results
 init_model = ModelGLM(
     city=city,
     start_year=start_year,
