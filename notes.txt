@@ -1,0 +1,12 @@
+- longer lag days; distributed lag may be better
+- bias is introduced if you have longer moving average for temperature x mortality correlation
+- temperature is a covariate; simplier model (not distributed lag model) may be fine
+- limit the lag day for temperature (?)
+- distribution of QAIC according to lag days of temperature [dependent var ~ independent var + confounding vars]
+    - confounding vars should include same day temperature (e.g. 0) by default
+    - confounding vars will include temperature (e.g. 7, 14, 21) = 20 may be too long at the moment
+- trade-off between air pollution and temperature effect on mortality
+- add "year" into the model for long-term trend (without spline, linear term is fine)
+- may need "holiday" confounding variable when conducting sensitivity analysis
+- results visualization (without pollen, with pollen)
+- forest plots (city specific and combined) should be included in the supplementary materials

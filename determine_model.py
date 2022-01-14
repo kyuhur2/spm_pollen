@@ -18,6 +18,7 @@ del qaics_group["Current Lag"]
 eq1min = qaics_group.loc[qaics_group["QAIC of Equation 1"].idxmin()]
 eq2min = qaics_group.loc[qaics_group["QAIC of Equation 2"].idxmin()]
 
+# eq1 - without pollen; eq2 - with pollen
 if eq1min["Confounding Variables"] == eq2min["Confounding Variables"]:
     print("Best model is the same for eq1 and eq2.")
 else:
@@ -25,7 +26,7 @@ else:
 
 # get rid of brackets, quotations and put into a list
 x = eq2min["Confounding Variables"]
-if (x.count(',') + 1) >= 2:
+if (x.count(",") + 1) >= 2:
     conf = x.replace("[", "").replace("]", "").replace("'", "").split(", ")
 elif x != "":
     conf = [x.replace("[", "").replace("]", "").replace("'", "")]

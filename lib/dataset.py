@@ -25,7 +25,7 @@ class ImportAndCleanData:
         confounding: List[str],
         temp_bool: bool,
         temp_moving_average: int,
-        current_lag: int
+        current_lag: int,
     ):
         self.city = city
         self.start_year = start_year
@@ -55,18 +55,23 @@ class ImportAndCleanData:
         # lags for exposure, interactive
         if self.lag_or_ma is True:
             data[self.exposure + "_" + str(self.current_lag)] = data[
-                self.exposure].shift(self.current_lag)
+                self.exposure
+            ].shift(self.current_lag)
             data[self.interactive + "_" + str(self.current_lag)] = data[
-                self.interactive].shift(self.current_lag)
+                self.interactive
+            ].shift(self.current_lag)
         else:
-            data[self.exposure + "_ma" + str(self.current_lag)] = data[
-                self.exposure].rolling(window=self.current_lag).mean()
-            data[self.interactive + "_ma" + str(self.current_lag)] = data[
-                self.interactive].rolling(window=self.current_lag).mean()
+            data[self.exposure + "_ma" + str(self.current_lag)] = (
+                data[self.exposure].rolling(window=self.current_lag).mean()
+            )
+            data[self.interactive + "_ma" + str(self.current_lag)] = (
+                data[self.interactive].rolling(window=self.current_lag).mean()
+            )
 
         # ma for temperature
-        data[f"Tave_ma{self.temp_moving_average}"] = data["Tave"].rolling(
-            window=self.temp_moving_average).mean()
+        data[f"Tave_ma{self.temp_moving_average}"] = (
+            data["Tave"].rolling(window=self.temp_moving_average).mean()
+        )
 
         return data
 
@@ -78,11 +83,11 @@ class ImportAndCleanData:
 
         # turn into quantiles
         try:
-            data[interactive_lag] = pd.qcut(
-                data[interactive_lag], 4, labels=False)
+            data[interactive_lag] = pd.qcut(data[interactive_lag], 4, labels=False)
         except Exception:
             data[interactive_lag] = pd.qcut(
-                data[interactive_lag], 4, labels=False, duplicates="drop")
+                data[interactive_lag], 4, labels=False, duplicates="drop"
+            )
 
         # print number of NA counts
         print("Number of NA counts:" + str(data[interactive_lag].isna().sum()))
@@ -101,10 +106,10 @@ class ImportAndCleanData:
 
         # drop rows
         cleaned_data = cleaned_data[
-            (cleaned_data["year"] >= self.start_year) &
-            (cleaned_data["year"] <= self.end_year) &
-            (cleaned_data["month"] >= self.start_month) &
-            (cleaned_data["month"] <= self.end_month)
+            (cleaned_data["year"] >= self.start_year)
+            & (cleaned_data["year"] <= self.end_year)
+            & (cleaned_data["month"] >= self.start_month)
+            & (cleaned_data["month"] <= self.end_month)
         ]
 
         # cols to keep
@@ -115,10 +120,20 @@ class ImportAndCleanData:
             a = [f"{self.exposure}_ma{self.current_lag}"]
             b = [f"{self.interactive}_ma{self.current_lag}"]
 
-        col_names = [
-            "date", "city", "year", "month", self.outcome, self.exposure,
-            self.interactive
-        ] + a + b + self.confounding
+        col_names = (
+            [
+                "date",
+                "city",
+                "year",
+                "month",
+                self.outcome,
+                self.exposure,
+                self.interactive,
+            ]
+            + a
+            + b
+            + self.confounding
+        )
 
         # drop cols based on col_names
         cleaned_data = cleaned_data[col_names]
