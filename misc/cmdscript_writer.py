@@ -23,7 +23,7 @@ cities = [
     "Saga",
     "Kagoshima",
     "Miyazaki",
-    "Kitakyushu"
+    "Kitakyushu",
 ]
 
 # activate conda
@@ -40,8 +40,8 @@ for i in lag_or_ma:
     for j in cities:
         for k in lags:
             line = (
-                "python model_selection.py " +
-                f"--lag_or_ma {i} --city {j} --num_lags {k}\n"
+                "python model_selection.py "
+                + f"--lag_or_ma {i} --city {j} --num_lags {k}\n"
             )
             script.append(line)
 
@@ -53,8 +53,7 @@ for i in lag_or_ma:
     for j in cities:
         for k in lags:
             line = (
-                "python run_models.py " +
-                f"--lag_or_ma {i} --city {j} --num_lags {k}\n"
+                "python run_models.py " + f"--lag_or_ma {i} --city {j} --num_lags {k}\n"
             )
             script.append(line)
 

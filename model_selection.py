@@ -15,22 +15,21 @@ pd.options.mode.chained_assignment = None
 
 args_list = [
     # data configurations
-    "city",                 # 1
-    "start_year",           # 2
-    "end_year",             # 3
-    "start_month",          # 4
-    "end_month",            # 5
-    "lag_or_ma",            # 6
-    "num_lags",             # 7
-
+    "city",  # 1
+    "start_year",  # 2
+    "end_year",  # 3
+    "start_month",  # 4
+    "end_month",  # 5
+    "lag_or_ma",  # 6
+    "num_lags",  # 7
     # model configurations
-    "outcome",              # 8
-    "exposure",             # 9
-    "interactive",          # 10
-    "confounding",          # 11
-    "temp_bool",            # 12
+    "outcome",  # 8
+    "exposure",  # 9
+    "interactive",  # 10
+    "confounding",  # 11
+    "temp_bool",  # 12
     "temp_moving_average",  # 13
-    "current_lag"           # 14
+    "current_lag",  # 14
 ]
 
 parser = argparse.ArgumentParser()
@@ -44,8 +43,10 @@ parser.add_argument(f"--{args_list[6]}", type=int, default=7)
 parser.add_argument(f"--{args_list[7]}", type=str, default="All")
 parser.add_argument(f"--{args_list[8]}", type=str, default="SPMout")
 parser.add_argument(f"--{args_list[9]}", type=str, default="suhiout")
-parser.add_argument(f"--{args_list[10]}", default=[
-    "Tave", "RHave", "dow", "doy", "ad", "holiday"])
+parser.add_argument(
+    f"--{args_list[10]}",
+    default=["Tave", "RHave", "dow", "doy", "ad", "holiday"],
+)
 parser.add_argument(f"--{args_list[11]}", type=bool, default=True)
 parser.add_argument(f"--{args_list[12]}", type=int, default=20)
 parser.add_argument(f"--{args_list[13]}", type=int, default=1)
@@ -80,25 +81,18 @@ args_val = [
     end_month,
     lag_or_ma,
     num_lags,
-
     outcome,
     exposure,
     interactive,
     confounding,
     temp_bool,
     temp_moving_average,
-    current_lag
+    current_lag,
 ]
 
-printargs(
-    args_list,
-    args_val=args_val
-)
+printargs(args_list, args_val=args_val)
 
-saveargs(
-    args_val=args_val,
-    saveargs_path=(path / "results")
-)
+saveargs(args_val=args_val, saveargs_path=(path / "results"))
 
 # data
 init_dataset = ImportAndCleanData(
@@ -115,7 +109,7 @@ init_dataset = ImportAndCleanData(
     confounding=confounding,
     temp_bool=temp_bool,
     temp_moving_average=temp_moving_average,
-    current_lag=current_lag
+    current_lag=current_lag,
 )
 
 data = init_dataset.clean_data()
@@ -126,7 +120,7 @@ test_model = ModelQAIC(
     exposure=exposure,
     interactive=interactive,
     confounding=confounding,
-    current_lag=current_lag
+    current_lag=current_lag,
 )
 
 test_model.best_model(data=data)

@@ -10,20 +10,14 @@ def println(num_lines: int = 1):
         print("\n")
 
 
-def printargs(
-    args_list: List[str],
-    args_val: List
-):
+def printargs(args_list: List[str], args_val: List) -> None:
     println()
     for i in range(len(args_list)):
         print(f"{args_list[i]}: {args_val[i]}")
     println()
 
 
-def saveargs(
-    args_val: List,
-    saveargs_path: Path
-):
+def saveargs(args_val: List, saveargs_path: Path) -> None:
     args = []
     for i in range(len(args_val)):
         args.append(args_val[i])

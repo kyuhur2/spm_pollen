@@ -25,7 +25,7 @@ class ModelGLM:
         exposure: str,
         interactive: str,
         confounding: List[str],
-        current_lag: int
+        current_lag: int,
     ):
         self.city = city
         self.start_year = start_year
@@ -49,8 +49,8 @@ class ModelGLM:
         Returns:
             q3 - q1 (float): Inter-quartile range.
         """
-        q1 = data[self.exposure].quantile(.25)
-        q3 = data[self.exposure].quantile(.75)
+        q1 = data[self.exposure].quantile(0.25)
+        q3 = data[self.exposure].quantile(0.75)
 
         return q3 - q1
 
@@ -85,9 +85,9 @@ class ModelGLM:
 
         # interactive
         eq2 = (
-            f"{self.outcome} ~ {self.exposure}_{self.current_lag}" +
-            f":factor({self.interactive}_{self.current_lag}) + " +
-            f"{self.exposure}_{self.current_lag} + {x}"
+            f"{self.outcome} ~ {self.exposure}_{self.current_lag}"
+            + f":factor({self.interactive}_{self.current_lag}) + "
+            + f"{self.exposure}_{self.current_lag} + {x}"
         )
 
         return eq1, eq2
@@ -132,7 +132,7 @@ class ModelGLM:
     def model(self, data):
         eq1, eq2 = self.eq_creator()
         iqr = self.calculate_iqr(data)
-        data[self.exposure] = data[self.exposure]/iqr
+        data[self.exposure] = data[self.exposure] / iqr
 
         # results from glm
         exp1, exp2, sum1, sum2 = self.interactive_glm(data, eq1, eq2)
@@ -140,8 +140,12 @@ class ModelGLM:
         # dataframe specifications
         exposure_lag = self.exposure + "_" + str(self.current_lag)
         exposure_lag_interactive = (
-            exposure_lag + ":factor(" + self.interactive + "_" +
-            str(self.current_lag) + ")"
+            exposure_lag
+            + ":factor("
+            + self.interactive
+            + "_"
+            + str(self.current_lag)
+            + ")"
         )
 
         if self.lag_or_ma is True:
@@ -168,7 +172,7 @@ class ModelGLM:
             "cil",
             "ciu",
             "B",
-            "se"
+            "se",
         ]
 
         # create results df
@@ -188,10 +192,13 @@ class ModelGLM:
         results.append(pd.Series([eq2] * num_rows))
 
         # relative risk, confidence interval lower/upper
-        rr_cil_ciu = pd.concat([
-            exp1.loc[[exposure_lag], :],
-            exp2[exp2.index.str.startswith(self.exposure)]
-        ], ignore_index=True)
+        rr_cil_ciu = pd.concat(
+            [
+                exp1.loc[[exposure_lag], :],
+                exp2[exp2.index.str.startswith(self.exposure)],
+            ],
+            ignore_index=True,
+        )
         results.append(rr_cil_ciu)
 
         # B, se
@@ -202,7 +209,7 @@ class ModelGLM:
                     sum2.loc[exposure_lag, :]["Estimate"],
                     sum2.loc[exposure_lag_interactive + "1", :]["Estimate"],
                     sum2.loc[exposure_lag_interactive + "2", :]["Estimate"],
-                    sum2.loc[exposure_lag_interactive + "3", :]["Estimate"]
+                    sum2.loc[exposure_lag_interactive + "3", :]["Estimate"],
                 ]
             )
         )
@@ -213,7 +220,7 @@ class ModelGLM:
                     sum2.loc[exposure_lag, :]["Std. Error"],
                     sum2.loc[exposure_lag_interactive + "1", :]["Std. Error"],
                     sum2.loc[exposure_lag_interactive + "2", :]["Std. Error"],
-                    sum2.loc[exposure_lag_interactive + "3", :]["Std. Error"]
+                    sum2.loc[exposure_lag_interactive + "3", :]["Std. Error"],
                 ]
             )
         )
@@ -223,7 +230,4 @@ class ModelGLM:
         results.columns = col_names
 
         # save results
-        self.export_data(
-            path / "results/results.csv",
-            data=results
-        )
+        self.export_data(path / "results/results.csv", data=results)

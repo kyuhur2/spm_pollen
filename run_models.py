@@ -18,22 +18,21 @@ with open(path / "model/confounding.json", "r") as f:
 
 args_list = [
     # data configurations
-    "city",                 # 1
-    "start_year",           # 2
-    "end_year",             # 3
-    "start_month",          # 4
-    "end_month",            # 5
-    "lag_or_ma",            # 6
-    "num_lags",             # 7
-
+    "city",  # 1
+    "start_year",  # 2
+    "end_year",  # 3
+    "start_month",  # 4
+    "end_month",  # 5
+    "lag_or_ma",  # 6
+    "num_lags",  # 7
     # model configurations
-    "outcome",              # 8
-    "exposure",             # 9
-    "interactive",          # 10
-    "confounding",          # 11
-    "temp_bool",            # 12
+    "outcome",  # 8
+    "exposure",  # 9
+    "interactive",  # 10
+    "confounding",  # 11
+    "temp_bool",  # 12
     "temp_moving_average",  # 13
-    "current_lag"           # 14
+    "current_lag",  # 14
 ]
 
 parser = argparse.ArgumentParser()
@@ -78,15 +77,14 @@ printargs(
         end_month,
         lag_or_ma,
         num_lags,
-
         outcome,
         exposure,
         interactive,
         confounding,
         temp_bool,
         temp_moving_average,
-        current_lag
-    ]
+        current_lag,
+    ],
 )
 
 # subset data
@@ -104,7 +102,7 @@ init_dataset = ImportAndCleanData(
     confounding=confounding,
     temp_bool=temp_bool,
     temp_moving_average=temp_moving_average,
-    current_lag=current_lag
+    current_lag=current_lag,
 )
 
 data = init_dataset.clean_data()
@@ -121,7 +119,7 @@ init_model = ModelGLM(
     exposure=exposure,
     interactive=interactive,
     confounding=confounding,
-    current_lag=current_lag
+    current_lag=current_lag,
 )
 
 results = init_model.model(data=data)
