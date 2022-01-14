@@ -9,24 +9,33 @@ Below is a graphical abstract that describes the project. This graphical abstrac
 # List of To-Dos
 
 **Setup**
-✅ Anaconda Environment
-✅ Black Linter
-✅ Pre-commit
-✅ Requirements.txt
+
+| Completed | Task                 |
+| --------- | -------------------- |
+| ✅        | Anaconda environment |
+| ✅        | Black linter         |
+| ✅        | Pre-commit           |
+| ✅        | Requirements.txt     |
 
 **Progress**
-✅ Data pre-processing
-❌ Descriptive analysis
-✅ Model selection
-✅ Individual analysis
-❌ Aggregated analysis
-❌ Tables
-❌ Figures
-❌ Tests
+
+| Completed | Task                 |
+| --------- | -------------------- |
+| ✅        | Data pre-processing  |
+| ❌        | Descriptive analysis |
+| ✅        | Model selection      |
+| ✅        | Individual analysis  |
+| ❌        | Aggregated analysis  |
+| ❌        | Tables               |
+| ❌        | Figures              |
+| ❌        | Tests                |
 
 **Docs**
-❌ Manuscript
-❌ References
+
+| Completed | Task       |
+| --------- | ---------- |
+| ❌        | Manuscript |
+| ❌        | References |
 
 # Project Layout
 
