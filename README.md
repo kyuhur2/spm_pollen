@@ -89,11 +89,21 @@ A tree of the project files and folders are provided below.
     ├── environment.yml
     └── README.md
 
-# Notes
+# General Issues
 
-Environment should be set up with `environment.yaml`; rpy2 is installed with `conda` not `pip` (latest version has issues with R/vscode)
+1. `conda` and `pre-commit`
 
-However, should change the **rpy2.robjects.pandas2ri.ri2py_dataframe** function as suggested here: https://github.com/rpy2/rpy2/issues/680
+There's a known conflict issue between `conda` and `pre-commit` originating from how git hooks are generated for python versions under `3.9`. `pre-commit install` python executables are stored in generated git hooks, but a `conda` environment executes the installed python version only when the environment is activated. To circumvent this issue, there are three possible ways to solve this, as documented [here](https://github.com/conda-forge/pre-commit-feedstock/issues/9):
+
+- Activate the environment in the terminal, open vscode from the activated terminal using the command `code .` **(tested)**
+- Create [exec-wrappers](https://github.com/gqmelo/exec-wrappers) and [conda-wrappers](https://github.com/conda-forge/conda-wrappers-feedstock) that mimic a conda activation before running the executable **(not tested)**
+- Reinstall conda with python versions `3.9` or `3.10` **(not tested)**
+
+# Project-specific Issues
+
+1. `rpy2`
+
+Environment should be set up with `requirements.txt`; `rpy2`==2.9.4 should be installed with `conda` not `pip` (latest version has issues with R/vscode). The **rpy2.robjects.pandas2ri.ri2py_dataframe** function should be altered as suggested [here](https://github.com/rpy2/rpy2/issues/680) for this project to work.
 
     def ri2py_dataframe(obj):
         # items = tuple((k, ri2py(v)) for k, v in obj.items())
