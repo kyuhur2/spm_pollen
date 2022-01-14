@@ -8,26 +8,27 @@ Below is a graphical abstract that describes the project. This graphical abstrac
 
 # List of To-Dos
 
-Setup:
+**Setup**
 
-✅ Anaconda Environment
-✅ Black Linter
-❌ Pre-commit
+✅ Anaconda Environment  
+✅ Black Linter  
+❌ Pre-commit  
 ❌ Environment.yml
 
-Progress:
+**Progress**
 
-✅ Data pre-processing
-❌ Descriptive analysis
-✅ Model selection
-✅ Individual analysis
-❌ Aggregated analysis
-❌ Tables
-❌ Figures
+✅ Data pre-processing  
+❌ Descriptive analysis  
+✅ Model selection  
+✅ Individual analysis  
+❌ Aggregated analysis  
+❌ Tables  
+❌ Figures  
+❌ Tests
 
-Docs:
+**Docs**
 
-❌ Manuscript
+❌ Manuscript  
 ❌ References
 
 # Project Layout
