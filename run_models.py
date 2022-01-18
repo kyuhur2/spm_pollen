@@ -1,13 +1,13 @@
-import os
-import json
 import argparse
+import json
+import os
+from pathlib import Path
+
 import pandas as pd
 
-from pathlib import Path
-from lib.model import ModelGLM
 from lib.dataset import ImportAndCleanData
+from lib.model import ModelGLM
 from lib.saveargs import printargs, println  # noqa
-
 
 pd.options.mode.chained_assignment = None
 

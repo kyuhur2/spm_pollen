@@ -1,8 +1,8 @@
 import os
-import pandas as pd
-
-from typing import List
 from pathlib import Path
+from typing import List
+
+import pandas as pd
 
 
 class ImportAndCleanData:

@@ -1,8 +1,7 @@
-import os
 import json
-
-from typing import List
+import os
 from pathlib import Path
+from typing import List
 
 
 def println(num_lines: int = 1):
