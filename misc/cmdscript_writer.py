@@ -1,7 +1,5 @@
 import os
-
 from pathlib import Path
-
 
 """
 Creates a .bat file which contains a command line script that iterates for

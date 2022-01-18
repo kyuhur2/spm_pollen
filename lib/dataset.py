@@ -5,11 +5,11 @@ from typing import List
 from pathlib import Path
 
 
-path = Path(os.getcwd())
-data = pd.read_csv(path / "data/cleaned_data.csv")
-
-
 class ImportAndCleanData:
+
+    path = Path(os.getcwd())
+    data = pd.read_csv(path / "data/cleaned_data.csv")
+
     def __init__(
         self,
         city: str,
@@ -83,10 +83,12 @@ class ImportAndCleanData:
 
         # turn into quantiles
         try:
-            data[interactive_lag] = pd.qcut(data[interactive_lag], 4, labels=False)
+            self.data[interactive_lag] = pd.qcut(
+                self.data[interactive_lag], 4, labels=False
+            )
         except Exception:
-            data[interactive_lag] = pd.qcut(
-                data[interactive_lag], 4, labels=False, duplicates="drop"
+            self.data[interactive_lag] = pd.qcut(
+                self.data[interactive_lag], 4, labels=False, duplicates="drop"
             )
 
         # print number of NA counts
@@ -99,7 +101,7 @@ class ImportAndCleanData:
 
     def clean_data(self):
         # drop rows based on PREFECTURE - necessary to create lag & ma cols
-        cleaned_data = data[(data.city == self.city)]
+        cleaned_data = self.data[(self.data.city == self.city)]
 
         # create lags & ma
         cleaned_data = self.create_lags(cleaned_data)
